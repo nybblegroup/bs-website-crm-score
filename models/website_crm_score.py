@@ -138,7 +138,7 @@ class website_crm_score(models.Model):
             if score.rule_type == "score":
                 query_str = """
                     INSERT INTO crm_lead_score_rel
-                    SELECT crm_lead.id AS lead_id, %s AS score_id FROM {} WHERE {}
+                    SELECT %s AS score_id, crm_lead.id AS lead_id  FROM {} WHERE {}
                     RETURNING lead_id
                 """.format(
                     from_clause, where_clause
