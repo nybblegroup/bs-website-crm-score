@@ -51,11 +51,11 @@ class website_crm_score(models.Model):
     )
 
     def write(self, values):
-        if "domain" in values:
+        if "rule_type" in values or "domain" in values or "value" in values or "event_based" in values:
             values["lead_ids"] = False
         res = super(website_crm_score, self).write(values)
         self.env.cr.commit()
-        if "domain" in values:
+        if "rule_type" in values or "domain" in values or "value" in values or "event_based" in values:
             self.env["website.crm.score"].assign_scores_to_leads(ids=self.ids)
         return res
 
@@ -92,11 +92,11 @@ class website_crm_score(models.Model):
         )
 
         if ids:
-            domain = [("id", "in", ids)]
+            domain = [('active',"=",True),("id", "in", ids)]
         elif self.ids:
-            domain = [("id", "in", self.ids)]
+            domain = [('active',"=",True),("id", "in", self.ids)]
         else:
-            domain = []
+            domain = [('active',"=",True)]
         scores = self.search(domain)
 
         # Sort rule to unlink before scoring
