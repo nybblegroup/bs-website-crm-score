@@ -1,6 +1,9 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Lead(models.Model):
@@ -26,8 +29,12 @@ class Lead(models.Model):
     def write(self, values):
         values["score_ids"] = False
         res = super(Lead, self).write(values)
-        self.env.cr.commit()
-        self.env["website.crm.score"].assign_scores_to_leads(lead_ids=self.ids)
+        try:
+            if self.type == "lead":
+                self.env.cr.commit()
+                self.env["website.crm.score"].assign_scores_to_leads(lead_ids=self.ids)
+        except Exception as e:
+            _logger.error(f"Error in write method of Lead model. Error: {e}")
         return res
 
     @api.depends("score_ids", "score_ids.value")
