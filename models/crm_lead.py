@@ -31,7 +31,8 @@ class Lead(models.Model):
         res = super(Lead, self).write(values)
         try:
             if self.type == "lead":
-                self.env.cr.commit()
+                # self.env.cr.commit()
+                self.env.cr.flush()  # save data in database without loss savepoint
                 self.env["website.crm.score"].assign_scores_to_leads(lead_ids=self.ids)
         except Exception as e:
             _logger.error(f"Error in write method of Lead model. Error: {e}")
