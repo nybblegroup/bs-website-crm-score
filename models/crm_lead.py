@@ -42,7 +42,7 @@ class Lead(models.Model):
     def _compute_score(self):
         self._cr.execute(
             """
-             SELECT
+             SELECTa
                 lead_id, COALESCE(sum(s.value), 0) as sum
              FROM
                 crm_lead_score_rel rel
